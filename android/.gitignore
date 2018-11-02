@@ -1,0 +1,14 @@
+*.iml
+.gradle
+/local.properties
+
+# User-specific configurations
+.idea/
+
+# Signing files
+.signing/
+
+.DS_Store
+*/build
+/captures
+.externalNativeBuild

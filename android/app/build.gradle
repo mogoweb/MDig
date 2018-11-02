@@ -1,0 +1,32 @@
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion 21
+    buildToolsVersion "27.0.3"
+
+    defaultConfig {
+        applicationId "edu.stanford.cs231m.mdig"
+        minSdkVersion 21
+        targetSdkVersion 21
+
+        ndk {
+            moduleName "jpcnn"
+            abiFilters "armeabi-v7a"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path 'src/main/jni/CMakeLists.txt'
+        }
+    }
+}
+
+dependencies {
+    implementation project(':openCVLibrary24136')
+}
