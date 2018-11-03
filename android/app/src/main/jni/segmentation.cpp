@@ -1,4 +1,5 @@
 #include "segmentation.hpp"
+#include <numeric>
 #include <string>
 #include <vector>
 #include <opencv2/opencv.hpp>
@@ -117,9 +118,9 @@ void Segmentation::preprocess(Mat &image, Mat &rescale_output, Mat &output, int 
              //       output.at<uchar>(i,j)=0;
            }
         }
-        double sum = 0.0; //~: accumulate(pixels.begin(), pixels.end(),0.0);
+        double sum = accumulate(pixels.begin(), pixels.end(),0.0);
         double mean = sum/pixels.size();
-        double sq_sum = 0.0; //~: inner_product(pixels.begin(),pixels.end(), pixels.begin(), 0.0);
+        double sq_sum = inner_product(pixels.begin(),pixels.end(), pixels.begin(), 0.0);
         double stdev = sqrt(sq_sum/pixels.size() - mean*mean);
         threshold_value = mean+stdev/2;
 
