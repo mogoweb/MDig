@@ -12,7 +12,10 @@ import java.util.Locale;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -43,6 +46,11 @@ public class CameraActivity extends Activity implements CvCameraViewListener2, O
     private boolean mIsReadyForTracking = false;
 
     private boolean mRequiresInit = false;
+
+    // These variables are used (at the moment) to fix camera orientation from 270degree to 0degree
+    Mat mRgba;
+    Mat mRgbaF;
+    Mat mRgbaT;
 
     private void deployResources()
     {
@@ -231,6 +239,10 @@ public class CameraActivity extends Activity implements CvCameraViewListener2, O
     @Override
     public void onCameraViewStarted(int width, int height)
     {
+        mRgba = new Mat(height, width, CvType.CV_8UC4);
+        mRgbaF = new Mat(height, width, CvType.CV_8UC4);
+        mRgbaT = new Mat(width, width, CvType.CV_8UC4);
+
 		Toast.makeText(this, "Tap the screen to take a picture.",
 				Toast.LENGTH_LONG).show();
     }
@@ -238,12 +250,19 @@ public class CameraActivity extends Activity implements CvCameraViewListener2, O
     @Override
     public void onCameraViewStopped()
     {
+        mRgba.release();
     }
 
     @Override
     public Mat onCameraFrame(CvCameraViewFrame inputFrame)
     {
-		return inputFrame.rgba();
+        mRgba = inputFrame.rgba();
+        // Rotate mRgba 90 degrees
+        Core.transpose(mRgba, mRgbaT);
+        Imgproc.resize(mRgbaT, mRgbaF, mRgbaF.size(), 0,0, 0);
+        Core.flip(mRgbaF, mRgba, 1 );
+
+        return mRgba;
     }
 
     static
